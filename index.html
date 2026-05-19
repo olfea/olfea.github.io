@@ -7,225 +7,654 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --forest:#183224;--sage:#84a98c;--mist:#c9d1c9;
-  --slate:#97ada2;--deep:#11291d;--bronze:#a07850;
-  --ease:cubic-bezier(0.16,1,0.3,1);
+/* =============================================
+   RESET & TOKENS
+============================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --forest: #183224;
+  --sage:   #84a98c;
+  --mist:   #c9d1c9;
+  --slate:  #97ada2;
+  --deep:   #11291d;
+  --bronze: #a07850;
+  --ease:   cubic-bezier(0.16, 1, 0.3, 1);
 }
-html{scroll-behavior:auto}
-body{background:var(--deep);color:var(--mist);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
-::selection{background:var(--sage);color:var(--deep)}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--deep)}::-webkit-scrollbar-thumb{background:var(--sage);border-radius:2px}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--deep);
+  color: var(--mist);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+::selection { background: var(--sage); color: var(--deep); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--deep); }
+::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 2px; }
 
-/* CURSOR */
-#cursor-dot{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--sage);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:width .3s,height .3s}
-#cursor-ring{position:fixed;width:36px;height:36px;border-radius:50%;border:1px solid rgba(132,169,140,.45);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s var(--ease),height .4s var(--ease)}
+/* =============================================
+   CURSOR
+============================================= */
+#cur-dot {
+  position: fixed; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--sage); pointer-events: none; z-index: 9999;
+  left: -20px; top: -20px;
+  transform: translate(-50%, -50%);
+  transition: width .3s, height .3s;
+  mix-blend-mode: screen;
+}
+#cur-ring {
+  position: fixed; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(132,169,140,.4);
+  pointer-events: none; z-index: 9998;
+  left: -20px; top: -20px;
+  transform: translate(-50%, -50%);
+  transition: width .4s var(--ease), height .4s var(--ease);
+}
 
-/* GRAIN */
-#grain{position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;animation:grain 1.2s steps(2) infinite}
-@keyframes grain{0%{background-position:0 0}33%{background-position:-80px 40px}66%{background-position:60px -30px}100%{background-position:0 0}}
+/* =============================================
+   GRAIN
+============================================= */
+#grain {
+  position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  opacity: .042;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+  animation: grn 1.4s steps(2) infinite;
+}
+@keyframes grn {
+  0%   { background-position: 0 0; }
+  33%  { background-position: -80px 40px; }
+  66%  { background-position: 60px -30px; }
+  100% { background-position: 0 0; }
+}
 
-/* PRELOADER */
-#preloader{position:fixed;inset:0;z-index:10000;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
-.pre-logo{font-family:'Cormorant SC',serif;font-size:clamp(3rem,10vw,7rem);font-weight:300;letter-spacing:.25em;color:var(--mist);overflow:hidden}
-.pre-logo span{display:inline-block;transform:translateY(120%);opacity:0}
-.pre-bar-outer{width:180px;height:1px;background:rgba(132,169,140,.15);overflow:hidden}
-.pre-bar{height:100%;width:0;background:var(--sage)}
-.pre-tagline{font-size:.58rem;letter-spacing:.5em;text-transform:uppercase;color:var(--slate);opacity:0}
+/* =============================================
+   PRELOADER
+============================================= */
+#preloader {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--deep);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2rem;
+}
+.pre-word {
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 300; letter-spacing: .3em;
+  color: var(--mist); overflow: hidden;
+}
+.pre-word span { display: inline-block; }
+.pre-track { width: 160px; height: 1px; background: rgba(132,169,140,.15); overflow: hidden; }
+.pre-fill  { height: 100%; width: 0; background: var(--sage); }
+.pre-sub   { font-size: .58rem; letter-spacing: .45em; text-transform: uppercase; color: var(--slate); }
 
-/* NAV */
-#nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:1.8rem 3.5rem;display:flex;justify-content:space-between;align-items:center;transition:background .5s,padding .4s,border-color .5s;border-bottom:1px solid transparent}
-#nav.scrolled{background:rgba(17,41,29,.88);backdrop-filter:blur(18px) saturate(1.5);padding:1.1rem 3.5rem;border-bottom-color:rgba(132,169,140,.1)}
-.nav-logo{font-family:'Cormorant SC',serif;font-size:1rem;letter-spacing:.5em;color:var(--mist);text-decoration:none}
-.nav-links{display:flex;gap:3rem;list-style:none}
-.nav-links a{color:var(--slate);text-decoration:none;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;position:relative;transition:color .3s}
-.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:100%;height:1px;background:var(--sage);transition:right .4s var(--ease)}
-.nav-links a:hover{color:var(--mist)}.nav-links a:hover::after{right:0}
+/* =============================================
+   NAV
+============================================= */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 1.8rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background .5s, padding .4s, border-color .5s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(17,41,29,.9);
+  backdrop-filter: blur(20px) saturate(1.4);
+  padding: 1.1rem 4rem;
+  border-bottom-color: rgba(132,169,140,.1);
+}
+.n-logo {
+  font-family: 'Cormorant SC', serif;
+  font-size: .95rem; letter-spacing: .55em;
+  color: var(--mist); text-decoration: none;
+}
+.n-links { display: flex; gap: 3rem; list-style: none; }
+.n-links a {
+  color: var(--slate); text-decoration: none;
+  font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+  position: relative; transition: color .3s;
+}
+.n-links a::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0; right: 100%; height: 1px;
+  background: var(--sage);
+  transition: right .4s var(--ease);
+}
+.n-links a:hover { color: var(--mist); }
+.n-links a:hover::after { right: 0; }
 
-/* HERO */
-#hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.hero-bg-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.hero-orb{position:absolute;border-radius:50%}
-.hero-orb-a{width:900px;height:900px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(24,50,36,.9) 0%,transparent 70%)}
-.hero-orb-b{width:600px;height:600px;bottom:-100px;right:-100px;background:radial-gradient(circle,rgba(24,50,36,.5) 0%,transparent 70%)}
-.hero-ghost{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
-.ghost-word{font-family:'Cormorant SC',serif;font-size:clamp(8rem,23vw,22rem);font-weight:300;line-height:.83;color:transparent;display:block;white-space:nowrap;-webkit-text-stroke:1px rgba(132,169,140,.14)}
-.ghost-word:nth-child(2){-webkit-text-stroke:1px rgba(132,169,140,.07);transform:translateX(4%)}
-.ghost-word:nth-child(3){-webkit-text-stroke:.5px rgba(132,169,140,.04);transform:translateX(-2%)}
-#particles{position:absolute;inset:0;pointer-events:none}
+/* =============================================
+   HERO
+============================================= */
+#hero {
+  height: 100vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+/* Background layers */
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.h-orb {
+  position: absolute; border-radius: 50%;
+}
+.h-orb-1 {
+  width: 900px; height: 900px; top: -250px; left: -250px;
+  background: radial-gradient(circle, rgba(30,55,38,.95) 0%, transparent 65%);
+}
+.h-orb-2 {
+  width: 600px; height: 600px; bottom: -150px; right: -150px;
+  background: radial-gradient(circle, rgba(24,50,36,.6) 0%, transparent 65%);
+}
+.h-ghost {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none; overflow: hidden;
+}
+.h-ghost-w {
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(8rem, 22vw, 21rem);
+  font-weight: 300; line-height: .84;
+  color: transparent; display: block; white-space: nowrap;
+}
+.h-ghost-w:nth-child(1) { -webkit-text-stroke: 1.5px rgba(132,169,140,.16); }
+.h-ghost-w:nth-child(2) { -webkit-text-stroke: 1px  rgba(132,169,140,.08); transform: translateX(4%); }
+.h-ghost-w:nth-child(3) { -webkit-text-stroke: .5px rgba(132,169,140,.04); transform: translateX(-3%); }
+#pcv { position: absolute; inset: 0; pointer-events: none; }
 
-.hero-inner{position:relative;z-index:10;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5rem;max-width:1300px;width:100%;padding:0 3.5rem}
-.hero-left{text-align:right}.hero-right{text-align:left}
-.h-eyebrow{font-size:.58rem;letter-spacing:.45em;text-transform:uppercase;color:var(--sage);margin-bottom:1.5rem;display:block;overflow:hidden}
-.h-eyebrow span{display:inline-block;transform:translateY(120%);opacity:0}
-.h-main{font-family:'Cormorant SC',serif;font-size:clamp(5.5rem,14vw,14rem);font-weight:300;letter-spacing:.06em;line-height:1;color:var(--mist);overflow:hidden}
-.h-main span{display:inline-block;transform:translateY(110%)}
-.h-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,1.6vw,1.2rem);font-style:italic;color:var(--slate);line-height:1.75;overflow:hidden}
-.h-sub span{display:inline-block;transform:translateY(100%);opacity:0}
-.h-small{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(132,169,140,.45);margin-top:.8rem;overflow:hidden}
-.h-small span{display:inline-block;transform:translateY(100%);opacity:0}
-.hero-pen-col{display:flex;flex-direction:column;align-items:center;gap:1.5rem}
-#hpen{width:clamp(160px,22vw,320px);filter:drop-shadow(0 50px 100px rgba(0,0,0,.8)) drop-shadow(0 20px 40px rgba(132,169,140,.1));opacity:0;transform:translateY(30px);will-change:transform}
-.hero-scroll-cue{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.7rem;opacity:0}
-.hsc-word{font-size:.52rem;letter-spacing:.4em;text-transform:uppercase;color:var(--slate)}
-.hsc-line{width:1px;height:56px;background:linear-gradient(to bottom,transparent,var(--sage));position:relative;overflow:hidden}
-.hsc-line::after{content:'';position:absolute;top:-100%;left:0;right:0;height:100%;background:var(--sage);animation:linedrop 2s ease-in-out infinite}
-@keyframes linedrop{0%{top:-100%;opacity:0}20%{opacity:1}100%{top:100%;opacity:0}}
+/* Hero layout */
+.hero-body {
+  position: relative; z-index: 10;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 4.5rem;
+  max-width: 1300px; width: 100%; padding: 0 4rem;
+}
+.h-left  { text-align: right; }
+.h-right { text-align: left; }
 
-/* SHARED */
-section{padding:9rem 3.5rem}
-.wrap{max-width:1240px;margin:0 auto}
-.lbl{font-size:.56rem;letter-spacing:.45em;text-transform:uppercase;color:var(--sage);margin-bottom:.9rem;display:block}
-.ttl{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,5.5vw,5rem);font-weight:300;line-height:1.05;color:var(--mist)}
-.ttl em{font-style:italic;color:var(--sage)}
-.bod{font-size:.93rem;line-height:1.95;color:var(--slate);max-width:52ch}
-.hr{border:none;border-top:1px solid rgba(132,169,140,.1)}
-.sr{opacity:0;transform:translateY(45px)}
+.h-eyebrow {
+  font-size: .58rem; letter-spacing: .45em; text-transform: uppercase;
+  color: var(--sage); margin-bottom: 1.4rem; display: block;
+}
+.h-title {
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(5rem, 14vw, 13rem);
+  font-weight: 300; letter-spacing: .06em; line-height: 1;
+  color: var(--mist);
+}
+.h-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(.95rem, 1.5vw, 1.18rem);
+  font-style: italic; color: var(--slate); line-height: 1.75;
+}
+.h-micro {
+  font-size: .56rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(132,169,140,.45); margin-top: .8rem;
+}
+.h-pen-col {
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+#hero-pen {
+  width: clamp(160px, 22vw, 310px);
+  filter: drop-shadow(0 50px 100px rgba(0,0,0,.85))
+          drop-shadow(0 15px 35px rgba(132,169,140,.08));
+  will-change: transform;
+}
+.h-scroll {
+  position: absolute; bottom: 3rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column;
+  align-items: center; gap: .7rem;
+}
+.h-scroll-lbl {
+  font-size: .52rem; letter-spacing: .4em;
+  text-transform: uppercase; color: var(--slate);
+}
+.h-scroll-bar {
+  width: 1px; height: 54px;
+  background: linear-gradient(to bottom, transparent, var(--sage));
+  position: relative; overflow: hidden;
+}
+.h-scroll-bar::after {
+  content: ''; position: absolute;
+  top: -100%; left: 0; right: 0; height: 100%;
+  background: var(--sage);
+  animation: sdrop 2.2s ease-in-out infinite;
+}
+@keyframes sdrop {
+  0%   { top: -100%; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
 
-/* STORIA */
-#storia{background:var(--forest);position:relative;overflow:hidden}
-.storia-deco{position:absolute;top:-250px;right:-250px;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(132,169,140,.06) 0%,transparent 60%);pointer-events:none}
-.storia-g{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:center}
-.storia-big-n{font-family:'Cormorant SC',serif;font-size:14rem;font-weight:300;line-height:1;color:rgba(132,169,140,.07);margin-bottom:-3rem;user-select:none}
-.storia-q{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--sage);line-height:1.65;margin-top:2.5rem;border-left:1px solid rgba(132,169,140,.3);padding-left:1.5rem}
+/* =============================================
+   SHARED SECTION STYLES
+============================================= */
+section { padding: 9rem 4rem; }
+.wrap   { max-width: 1240px; margin: 0 auto; }
+.lbl    {
+  font-size: .56rem; letter-spacing: .45em;
+  text-transform: uppercase; color: var(--sage);
+  margin-bottom: .9rem; display: block;
+}
+.ttl {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  font-weight: 300; line-height: 1.06; color: var(--mist);
+}
+.ttl em { font-style: italic; color: var(--sage); }
+.bod    { font-size: .93rem; line-height: 1.95; color: var(--slate); max-width: 52ch; }
+.hr-line { border: none; border-top: 1px solid rgba(132,169,140,.1); }
 
-/* COME FUNZIONA */
-#come-funziona{background:var(--deep)}
-.cf-hdr{text-align:center;margin-bottom:6rem}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid rgba(132,169,140,.1)}
-.step{padding:3.5rem 3rem;border-right:1px solid rgba(132,169,140,.1);position:relative;overflow:hidden;transition:background .5s}
-.step:last-child{border-right:none}
-.step:hover{background:rgba(132,169,140,.04)}
-.step::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(132,169,140,.06) 0%,transparent 55%);opacity:0;transition:opacity .4s}
-.step:hover::before{opacity:1}
-.step-n{font-family:'Cormorant SC',serif;font-size:6rem;font-weight:300;line-height:1;color:rgba(132,169,140,.1);margin-bottom:2rem;transition:color .4s}
-.step:hover .step-n{color:rgba(132,169,140,.22)}
-.step-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--mist);margin-bottom:.75rem}
-.step-desc{font-size:.87rem;color:var(--slate);line-height:1.85}
-.step-arr{position:absolute;bottom:2rem;right:2rem;font-size:.9rem;color:rgba(132,169,140,.18);transition:color .3s,transform .3s}
-.step:hover .step-arr{color:var(--sage);transform:translate(4px,-4px)}
+/* =============================================
+   STORIA
+============================================= */
+#storia {
+  background: var(--forest); position: relative; overflow: hidden;
+}
+.storia-deco {
+  position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(132,169,140,.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.storia-g {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 7rem; align-items: center;
+}
+.storia-n {
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(8rem, 13vw, 14rem);
+  font-weight: 300; line-height: 1;
+  color: rgba(132,169,140,.07);
+  margin-bottom: -2.5rem; user-select: none;
+}
+.storia-q {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.28rem; font-style: italic;
+  color: var(--sage); line-height: 1.65;
+  margin-top: 2.5rem;
+  border-left: 1px solid rgba(132,169,140,.3);
+  padding-left: 1.5rem;
+}
 
-/* VIDEO */
-#vid{padding:0;position:relative}
-.vid-wrap{position:relative;overflow:hidden;width:100%;aspect-ratio:16/9;max-height:80vh}
-.vid-wrap video{width:100%;height:100%;object-fit:cover;display:block}
-.vid-ov{position:absolute;inset:0;background:linear-gradient(to bottom,var(--deep) 0%,transparent 15%,transparent 80%,var(--deep) 100%);pointer-events:none}
-.vid-cap{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;padding-bottom:4rem;pointer-events:none}
-.vid-cap p{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,3rem);font-style:italic;color:var(--mist);text-shadow:0 4px 30px rgba(0,0,0,.9);opacity:0;transform:translateY(20px);transition:opacity 1s,transform 1s}
-.vid-cap.on p{opacity:1;transform:translateY(0)}
+/* =============================================
+   COME FUNZIONA
+============================================= */
+#come-funziona { background: var(--deep); }
+.cf-hdr { text-align: center; margin-bottom: 5.5rem; }
+.steps-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(132,169,140,.12);
+}
+.step {
+  padding: 3.5rem 2.8rem;
+  border-right: 1px solid rgba(132,169,140,.12);
+  position: relative; overflow: hidden;
+  transition: background .5s;
+}
+.step:last-child { border-right: none; }
+.step:hover { background: rgba(132,169,140,.04); }
+.step::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(132,169,140,.07) 0%, transparent 55%);
+  opacity: 0; transition: opacity .4s;
+}
+.step:hover::before { opacity: 1; }
+.step-num {
+  font-family: 'Cormorant SC', serif;
+  font-size: 5.5rem; font-weight: 300; line-height: 1;
+  color: rgba(132,169,140,.1); margin-bottom: 2rem;
+  transition: color .4s;
+}
+.step:hover .step-num { color: rgba(132,169,140,.22); }
+.step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.45rem; color: var(--mist); margin-bottom: .75rem;
+}
+.step-desc { font-size: .87rem; color: var(--slate); line-height: 1.85; }
+.step-arr {
+  position: absolute; bottom: 1.8rem; right: 1.8rem;
+  font-size: .85rem; color: rgba(132,169,140,.15);
+  transition: color .3s, transform .3s;
+}
+.step:hover .step-arr { color: var(--sage); transform: translate(4px, -4px); }
 
-/* STAT */
-#stat{background:var(--deep);text-align:center;overflow:hidden;position:relative}
-.stat-ghost{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cormorant SC',serif;font-size:clamp(12rem,35vw,32rem);font-weight:300;color:transparent;-webkit-text-stroke:1px rgba(132,169,140,.05);pointer-events:none;white-space:nowrap;user-select:none;line-height:1}
-.stat-c{position:relative;z-index:2}
-.stat-num{font-family:'Cormorant SC',serif;font-size:clamp(5rem,14vw,10rem);font-weight:300;color:var(--sage);line-height:1}
-.stat-q{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2.8vw,1.9rem);font-style:italic;color:var(--mist);line-height:1.6;max-width:680px;margin:1.8rem auto}
-.stat-b{font-size:.85rem;color:var(--slate);max-width:55ch;margin:0 auto;line-height:1.9}
+/* =============================================
+   VIDEO
+============================================= */
+#vid { padding: 0; }
+.vid-wrap {
+  position: relative; width: 100%;
+  aspect-ratio: 16/9; max-height: 80vh;
+  overflow: hidden;
+}
+.vid-wrap video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.vid-ov {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--deep) 0%,
+    transparent 15%,
+    transparent 78%,
+    var(--deep) 100%
+  );
+  pointer-events: none;
+}
+.vid-cap {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: center;
+  padding-bottom: 4rem; pointer-events: none;
+}
+.vid-cap p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-style: italic; color: var(--mist);
+  text-shadow: 0 4px 30px rgba(0,0,0,.9);
+}
 
-/* ESSENZE */
-#essenze{background:var(--forest);padding-bottom:0;overflow:hidden}
-.ess-hdr{margin-bottom:4rem}
-.ess-outer{overflow:hidden;position:relative}
-.ess-inner{display:flex;gap:2px;width:max-content;cursor:grab}
-.ess-inner:active{cursor:grabbing}
-.essa{width:clamp(340px,34vw,460px);padding:4rem 3.5rem 5rem;border:1px solid rgba(132,169,140,.1);position:relative;overflow:hidden;flex-shrink:0;transition:border-color .4s}
-.essa:hover{border-color:rgba(132,169,140,.28)}
-.essa-stripe{width:36px;height:3px;border-radius:2px;margin-bottom:2.5rem}
-.lavanda .essa-stripe{background:#9b7fb6}
-.camomilla .essa-stripe{background:#c5a836}
-.eucalipto .essa-stripe{background:var(--sage)}
-.essa-name{font-family:'Cormorant Garamond',serif;font-size:3rem;font-style:italic;color:var(--mist);margin-bottom:.3rem;line-height:1}
-.essa-tag{font-size:.56rem;letter-spacing:.35em;text-transform:uppercase;color:var(--sage);margin-bottom:2rem;display:block}
-.essa-desc{font-size:.88rem;color:var(--slate);line-height:1.9}
-.essa-glyph{position:absolute;bottom:-1rem;right:-1rem;font-family:'Cormorant SC',serif;font-size:14rem;font-weight:300;line-height:1;color:rgba(132,169,140,.05);pointer-events:none;user-select:none}
-.ess-hint{text-align:center;padding:2.5rem 0 4rem;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(132,169,140,.3);animation:breathe 3s ease-in-out infinite}
-@keyframes breathe{0%,100%{opacity:.3}50%{opacity:.7}}
+/* =============================================
+   STAT
+============================================= */
+#stat {
+  background: var(--deep); text-align: center;
+  position: relative; overflow: hidden;
+}
+.stat-ghost {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(12rem, 36vw, 34rem);
+  font-weight: 300; line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(132,169,140,.05);
+  pointer-events: none; white-space: nowrap; user-select: none;
+}
+.stat-inner { position: relative; z-index: 2; }
+.stat-num {
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(5rem, 13vw, 10rem);
+  font-weight: 300; color: var(--sage); line-height: 1;
+  display: block;
+}
+.stat-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2.8vw, 1.85rem);
+  font-style: italic; color: var(--mist);
+  line-height: 1.6; max-width: 680px;
+  margin: 1.8rem auto;
+}
+.stat-body {
+  font-size: .85rem; color: var(--slate);
+  max-width: 55ch; margin: 0 auto; line-height: 1.9;
+}
 
-/* USI */
-#usi{background:var(--deep)}
-.usi-g{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:4rem}
-.uso{padding:3rem;border:1px solid rgba(132,169,140,.1);display:flex;gap:2rem;align-items:flex-start;position:relative;overflow:hidden;transition:border-color .4s;cursor:default}
-.uso::after{content:'';position:absolute;bottom:0;left:0;right:100%;height:1px;background:var(--sage);transition:right .6s var(--ease)}
-.uso:hover::after{right:0}
-.uso:hover{border-color:rgba(132,169,140,.22)}
-.uso-n{font-family:'Cormorant SC',serif;font-size:3.5rem;font-weight:300;color:rgba(132,169,140,.16);line-height:1;flex-shrink:0;transition:color .4s}
-.uso:hover .uso-n{color:rgba(132,169,140,.35)}
-.uso-title{font-family:'Cormorant Garamond',serif;font-size:1.22rem;color:var(--mist);margin-bottom:.5rem}
-.uso-desc{font-size:.86rem;color:var(--slate);line-height:1.85}
+/* =============================================
+   ESSENZE
+============================================= */
+#essenze { background: var(--forest); padding-bottom: 0; overflow: hidden; }
+.ess-hdr { margin-bottom: 4rem; }
+.ess-outer {
+  overflow-x: auto; cursor: grab;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.ess-outer::-webkit-scrollbar { display: none; }
+.ess-outer:active { cursor: grabbing; }
+.ess-row {
+  display: flex; gap: 2px;
+  width: max-content; padding-bottom: 0;
+}
+.essa {
+  width: clamp(340px, 34vw, 460px);
+  padding: 4rem 3.5rem 5rem;
+  border: 1px solid rgba(132,169,140,.12);
+  position: relative; overflow: hidden; flex-shrink: 0;
+  transition: border-color .4s;
+}
+.essa:hover { border-color: rgba(132,169,140,.28); }
+.essa-stripe {
+  width: 36px; height: 3px;
+  border-radius: 2px; margin-bottom: 2.5rem;
+}
+.lavanda   .essa-stripe { background: #9b7fb6; }
+.camomilla .essa-stripe { background: #c5a836; }
+.eucalipto .essa-stripe { background: var(--sage); }
+.essa-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-style: italic;
+  color: var(--mist); margin-bottom: .35rem; line-height: 1;
+}
+.essa-tag {
+  font-size: .55rem; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--sage);
+  margin-bottom: 2rem; display: block;
+}
+.essa-desc { font-size: .88rem; color: var(--slate); line-height: 1.9; }
+.essa-bg {
+  position: absolute; bottom: -1rem; right: -1rem;
+  font-family: 'Cormorant SC', serif;
+  font-size: 13rem; font-weight: 300; line-height: 1;
+  color: rgba(132,169,140,.05);
+  pointer-events: none; user-select: none;
+}
+.ess-hint {
+  text-align: center; padding: 2.5rem 0 4rem;
+  font-size: .56rem; letter-spacing: .3em;
+  text-transform: uppercase; color: rgba(132,169,140,.3);
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{opacity:.3} 50%{opacity:.7} }
 
-/* PRODOTTO */
-#prodotto{background:var(--forest);overflow:hidden}
-.prod-g{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center}
-.prod-img-w{position:relative;display:flex;justify-content:center}
-.prod-glow{position:absolute;width:80%;height:80%;border-radius:50%;background:radial-gradient(circle,rgba(132,169,140,.1) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:glowp 4s ease-in-out infinite}
-@keyframes glowp{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
-#pimg{width:100%;max-width:400px;position:relative;z-index:1;filter:drop-shadow(0 40px 80px rgba(0,0,0,.85));transition:transform .1s}
-.feats{margin-top:3rem}
-.feat{display:flex;gap:1.5rem;align-items:flex-start;padding:1.4rem 0;border-bottom:1px solid rgba(132,169,140,.08)}
-.feat:last-child{border-bottom:none}
-.fmark{width:5px;height:5px;border-radius:50%;background:var(--sage);flex-shrink:0;margin-top:.5rem;box-shadow:0 0 8px rgba(132,169,140,.4)}
-.fh{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--mist);margin-bottom:.3rem}
-.fp{font-size:.84rem;color:var(--slate);line-height:1.75}
+/* =============================================
+   USI
+============================================= */
+#usi { background: var(--deep); }
+.usi-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem; margin-top: 4rem;
+}
+.uso {
+  padding: 3rem; border: 1px solid rgba(132,169,140,.12);
+  display: flex; gap: 2rem; align-items: flex-start;
+  position: relative; overflow: hidden;
+  transition: border-color .4s; cursor: default;
+}
+.uso::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 100%; height: 1px;
+  background: var(--sage);
+  transition: right .6s var(--ease);
+}
+.uso:hover::after { right: 0; }
+.uso:hover { border-color: rgba(132,169,140,.24); }
+.uso-n {
+  font-family: 'Cormorant SC', serif;
+  font-size: 3.2rem; font-weight: 300;
+  color: rgba(132,169,140,.16); line-height: 1; flex-shrink: 0;
+  transition: color .4s;
+}
+.uso:hover .uso-n { color: rgba(132,169,140,.35); }
+.uso-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; color: var(--mist); margin-bottom: .5rem;
+}
+.uso-desc { font-size: .86rem; color: var(--slate); line-height: 1.85; }
 
-/* FUTURO */
-#futuro{background:var(--deep);text-align:center;position:relative;overflow:hidden}
-.fut-ghost{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cormorant SC',serif;font-size:clamp(4rem,14vw,13rem);font-weight:300;letter-spacing:.2em;white-space:nowrap;color:transparent;-webkit-text-stroke:1px rgba(132,169,140,.05);pointer-events:none;user-select:none}
-.fut-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:5rem}
-.fut-card{padding:2.5rem 2rem;text-align:left;border:1px solid rgba(132,169,140,.1);position:relative;overflow:hidden;transition:transform .4s var(--ease),border-color .4s}
-.fut-card:hover{transform:translateY(-10px);border-color:rgba(132,169,140,.25)}
-.fut-glyph{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--sage);margin-bottom:1.2rem;opacity:.7}
-.fut-h{font-family:'Cormorant Garamond',serif;font-size:1.12rem;color:var(--mist);margin-bottom:.6rem}
-.fut-p{font-size:.82rem;color:var(--slate);line-height:1.75}
+/* =============================================
+   PRODOTTO
+============================================= */
+#prodotto { background: var(--forest); overflow: hidden; }
+.prod-g {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8rem; align-items: center;
+}
+.prod-img-w {
+  position: relative; display: flex; justify-content: center;
+}
+.prod-glow {
+  position: absolute; width: 80%; height: 80%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(132,169,140,.1) 0%, transparent 65%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: gpulse 4.5s ease-in-out infinite;
+}
+@keyframes gpulse {
+  0%,100% { opacity: .5; transform: translate(-50%,-50%) scale(1); }
+  50%     { opacity: 1;  transform: translate(-50%,-50%) scale(1.1); }
+}
+#prod-img {
+  width: 100%; max-width: 400px; position: relative; z-index: 1;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,.85));
+  will-change: transform;
+}
+.feats { margin-top: 3rem; }
+.feat {
+  display: flex; gap: 1.5rem; align-items: flex-start;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid rgba(132,169,140,.08);
+}
+.feat:last-child { border-bottom: none; }
+.fmark {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--sage); flex-shrink: 0; margin-top: .5rem;
+  box-shadow: 0 0 8px rgba(132,169,140,.4);
+}
+.fh {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; color: var(--mist); margin-bottom: .3rem;
+}
+.fp { font-size: .84rem; color: var(--slate); line-height: 1.75; }
 
-/* FINALE */
-#finale{background:var(--deep);text-align:center;padding:10rem 3.5rem 6rem;overflow:hidden}
-.fin-dashes{display:flex;gap:8px;justify-content:center;margin-bottom:3rem}
-.fd{height:1px;background:var(--sage);opacity:.4}
-.fin-q{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3vw,2.1rem);font-style:italic;font-weight:300;color:var(--mist);line-height:1.65;margin-bottom:3rem;max-width:700px;margin-left:auto;margin-right:auto}
-.fin-sig{font-family:'Cormorant SC',serif;font-size:.68rem;letter-spacing:.45em;color:var(--sage)}
+/* =============================================
+   FUTURO
+============================================= */
+#futuro {
+  background: var(--deep); text-align: center;
+  position: relative; overflow: hidden;
+}
+.fut-ghost {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant SC', serif;
+  font-size: clamp(4rem, 14vw, 14rem);
+  font-weight: 300; letter-spacing: .2em; white-space: nowrap;
+  color: transparent; -webkit-text-stroke: 1px rgba(132,169,140,.05);
+  pointer-events: none; user-select: none;
+}
+.fut-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; margin-top: 5rem;
+}
+.fut-card {
+  padding: 2.5rem 2rem; text-align: left;
+  border: 1px solid rgba(132,169,140,.12);
+  position: relative; overflow: hidden;
+  transition: transform .4s var(--ease), border-color .4s;
+}
+.fut-card:hover { transform: translateY(-10px); border-color: rgba(132,169,140,.28); }
+.fut-ico {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.75rem; color: var(--sage);
+  margin-bottom: 1.2rem; opacity: .75;
+}
+.fut-h {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; color: var(--mist); margin-bottom: .6rem;
+}
+.fut-p { font-size: .82rem; color: var(--slate); line-height: 1.75; }
 
-/* FOOTER */
-footer{background:var(--deep);border-top:1px solid rgba(132,169,140,.08);padding:2.5rem 3.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.ft-logo{font-family:'Cormorant SC',serif;font-size:.88rem;letter-spacing:.5em;color:rgba(151,173,162,.25)}
-.ft-i{font-size:.62rem;letter-spacing:.08em;color:rgba(151,173,162,.18);font-family:'Cormorant Garamond',serif;font-style:italic}
+/* =============================================
+   CONCLUSIONE
+============================================= */
+#conclusione {
+  background: var(--deep); text-align: center;
+  padding: 10rem 4rem 6rem; overflow: hidden;
+}
+.fin-dashes {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 3rem;
+}
+.fd { height: 1px; background: var(--sage); opacity: .4; }
+.fin-q {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  font-style: italic; font-weight: 300;
+  color: var(--mist); line-height: 1.65;
+  max-width: 700px; margin: 0 auto 3rem;
+}
+.fin-sig {
+  font-family: 'Cormorant SC', serif;
+  font-size: .67rem; letter-spacing: .45em; color: var(--sage);
+}
 
-@media(max-width:900px){
-  body{cursor:auto}
-  #cursor-dot,#cursor-ring{display:none}
-  #nav{padding:1.2rem 1.5rem}
-  .nav-links{display:none}
-  section{padding:5rem 1.5rem}
-  .hero-inner{grid-template-columns:1fr;text-align:center;gap:2rem}
-  .hero-left,.hero-right{text-align:center}
-  #hpen{width:200px}
-  .storia-g,.prod-g{grid-template-columns:1fr;gap:3rem}
-  .steps,.usi-g,.fut-g{grid-template-columns:1fr}
-  .step{border-right:none;border-bottom:1px solid rgba(132,169,140,.1)}
-  footer{flex-direction:column;text-align:center}
+/* =============================================
+   FOOTER
+============================================= */
+footer {
+  background: var(--deep);
+  border-top: 1px solid rgba(132,169,140,.08);
+  padding: 2.5rem 4rem;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.ft-logo {
+  font-family: 'Cormorant SC', serif;
+  font-size: .85rem; letter-spacing: .5em;
+  color: rgba(151,173,162,.22);
+}
+.ft-i {
+  font-size: .6rem; letter-spacing: .08em;
+  color: rgba(151,173,162,.18);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+
+/* =============================================
+   RESPONSIVE
+============================================= */
+@media (max-width: 900px) {
+  body { cursor: auto; }
+  #cur-dot, #cur-ring { display: none; }
+  nav { padding: 1.2rem 1.5rem; }
+  .n-links { display: none; }
+  section { padding: 5rem 1.5rem; }
+  .hero-body { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+  .h-left, .h-right { text-align: center; }
+  #hero-pen { width: 200px; }
+  .storia-g, .prod-g { grid-template-columns: 1fr; gap: 3rem; }
+  .steps-grid, .usi-grid, .fut-grid { grid-template-columns: 1fr; }
+  .step { border-right: none; border-bottom: 1px solid rgba(132,169,140,.12); }
+  footer { flex-direction: column; text-align: center; }
 }
 </style>
 </head>
 <body>
 
-<div id="cursor-dot"></div>
-<div id="cursor-ring"></div>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
 <div id="grain"></div>
 
-<!-- PRELOADER -->
+<!-- ═══ PRELOADER ═══════════════════════════════════════ -->
 <div id="preloader">
-  <div class="pre-logo">
+  <div class="pre-word">
     <span>O</span><span>L</span><span>F</span><span>E</span><span>A</span>
   </div>
-  <div class="pre-bar-outer"><div class="pre-bar" id="pbar"></div></div>
-  <p class="pre-tagline" id="ptagline">Penna Antistress Aromaterapeutica</p>
+  <div class="pre-track"><div class="pre-fill" id="pfill"></div></div>
+  <p class="pre-sub">Penna Antistress Aromaterapeutica</p>
 </div>
 
-<!-- NAV -->
-<nav id="nav">
-  <a href="#" class="nav-logo">OLFEA</a>
-  <ul class="nav-links">
+<!-- ═══ NAV ═══════════════════════════════════════════════ -->
+<nav id="mainnav">
+  <a href="#" class="n-logo">OLFEA</a>
+  <ul class="n-links">
     <li><a href="#storia">Progetto</a></li>
     <li><a href="#come-funziona">Meccanismo</a></li>
     <li><a href="#essenze">Essenze</a></li>
@@ -234,222 +663,342 @@ footer{background:var(--deep);border-top:1px solid rgba(132,169,140,.08);padding
   </ul>
 </nav>
 
-<!-- HERO -->
+<!-- ═══ HERO ══════════════════════════════════════════════ -->
 <section id="hero">
-  <div class="hero-bg-wrap">
-    <div class="hero-orb hero-orb-a"></div>
-    <div class="hero-orb hero-orb-b"></div>
-    <div class="hero-ghost">
-      <span class="ghost-word">OLFEA</span>
-      <span class="ghost-word">OLFEA</span>
-      <span class="ghost-word">OLFEA</span>
+  <div class="hero-bg">
+    <div class="h-orb h-orb-1"></div>
+    <div class="h-orb h-orb-2"></div>
+    <div class="h-ghost">
+      <span class="h-ghost-w">OLFEA</span>
+      <span class="h-ghost-w">OLFEA</span>
+      <span class="h-ghost-w">OLFEA</span>
     </div>
-    <canvas id="particles"></canvas>
+    <canvas id="pcv"></canvas>
   </div>
 
-  <div class="hero-inner">
-    <div class="hero-left">
-      <span class="h-eyebrow"><span>Scrittura & Benessere</span></span>
-      <div class="h-sub"><span>Un oggetto quotidiano<br>trasformato in<br>rituale di cura.</span></div>
-      <div class="h-small"><span>L'aromaterapia a portata di mano</span></div>
+  <div class="hero-body">
+    <div class="h-left">
+      <span class="h-eyebrow" id="hey-l">Scrittura & Benessere</span>
+      <p class="h-sub" id="hsub-l">
+        Un oggetto quotidiano<br>
+        trasformato in<br>
+        rituale di cura.
+      </p>
+      <p class="h-micro" id="hmic-l">L'aromaterapia a portata di mano</p>
     </div>
-    <div class="hero-pen-col">
-      <h1 class="h-main"><span>OLFEA</span></h1>
-      <img id="hpen" src="penna_hq.png" alt="Penna Olfea" onerror="this.src='penna_19.png'">
+
+    <div class="h-pen-col">
+      <h1 class="h-title" id="htitle">OLFEA</h1>
+      <img id="hero-pen"
+           src="penna_hq.png"
+           alt="Penna Antistress Aromaterapeutica Olfea"
+           onerror="this.src='penna_19.png'">
     </div>
-    <div class="hero-right">
-      <span class="h-eyebrow"><span>Penna Antistress</span></span>
-      <div class="h-sub"><span>Lavanda · Camomilla<br>Eucalipto<br>Legno naturale & bronzo</span></div>
-      <div class="h-small"><span>Gruppo 8 — Design Lab</span></div>
+
+    <div class="h-right">
+      <span class="h-eyebrow" id="hey-r">Penna Antistress</span>
+      <p class="h-sub" id="hsub-r">
+        Lavanda · Camomilla<br>
+        Eucalipto<br>
+        Legno naturale & bronzo
+      </p>
+      <p class="h-micro" id="hmic-r">Gruppo 8 — Design Lab</p>
     </div>
   </div>
 
-  <div class="hero-scroll-cue" id="hscroll">
-    <span class="hsc-word">Scopri</span>
-    <div class="hsc-line"></div>
+  <div class="h-scroll" id="hscroll">
+    <span class="h-scroll-lbl">Scopri</span>
+    <div class="h-scroll-bar"></div>
   </div>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- STORIA -->
+<!-- ═══ STORIA ════════════════════════════════════════════ -->
 <section id="storia">
   <div class="storia-deco"></div>
   <div class="wrap storia-g">
     <div>
-      <div class="storia-big-n sr">01</div>
-      <span class="lbl sr">La Genesi</span>
-      <h2 class="ttl sr">Dove la <em>scrittura</em><br>incontra il<br><em>benessere</em></h2>
+      <div class="storia-n anim-el">01</div>
+      <span class="lbl anim-el">La Genesi</span>
+      <h2 class="ttl anim-el">
+        Dove la <em>scrittura</em><br>
+        incontra il<br>
+        <em>benessere</em>
+      </h2>
     </div>
     <div>
-      <p class="bod sr">Nel corso della storia, gli strumenti di scrittura si sono evoluti dai giunchi degli Egizi ai calami greci, dalla penna d'oca medievale ai pennini intercambiabili dell'Ottocento. Ogni epoca ha cercato qualcosa di più preciso, di più personale.</p>
-      <p class="bod sr" style="margin-top:1.4rem">Oggi Olfea compie un passo ulteriore: una penna in legno naturale con spugna interna aromaterapeutica che trasforma ogni gesto scritto in un momento di calma e concentrazione.</p>
-      <blockquote class="storia-q sr">"Non serve solo a scrivere.<br>Serve a stare bene."</blockquote>
+      <p class="bod anim-el">
+        Nel corso della storia, gli strumenti di scrittura si sono evoluti dai giunchi degli Egizi, immersi in inchiostri naturali, ai calami dei Greci, fino alla penna d'oca medievale — più precisa e flessibile. Con il Rinascimento arrivano le punte metalliche, e nell'Ottocento le prime penne a immersione con pennino intercambiabile.
+      </p>
+      <p class="bod anim-el" style="margin-top: 1.4rem;">
+        Questa evoluzione non riguarda solo la funzionalità, ma anche l'<em style="font-style:italic;color:var(--mist)">esperienza</em> della scrittura. Proprio per questo Olfea introduce un elemento innovativo: una spugna interna per l'aromaterapia, che unisce scrittura e benessere in un unico gesto quotidiano.
+      </p>
+      <blockquote class="storia-q anim-el">
+        "Non serve solo a scrivere.<br>Serve a stare bene."
+      </blockquote>
     </div>
   </div>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- COME FUNZIONA -->
+<!-- ═══ COME FUNZIONA ═════════════════════════════════════ -->
 <section id="come-funziona">
   <div class="wrap">
     <div class="cf-hdr">
-      <span class="lbl sr">Il Meccanismo</span>
-      <h2 class="ttl sr">Come <em>Funziona?</em></h2>
+      <span class="lbl anim-el">Il Meccanismo</span>
+      <h2 class="ttl anim-el">Come <em>Funziona?</em></h2>
     </div>
-    <div class="steps">
-      <div class="step sr">
-        <div class="step-n">I</div>
+    <div class="steps-grid">
+      <div class="step anim-el">
+        <div class="step-num">I</div>
         <h3 class="step-title">Carica l'Essenza</h3>
-        <p class="step-desc">Apri il tappo superiore e impregna la spugna interna con qualche goccia di olio essenziale. Lavanda per calmare, Camomilla per equilibrare, Eucalipto per risvegliare.</p>
+        <p class="step-desc">
+          Apri il tappo superiore della penna e impregna la spugna interna con qualche goccia dell'olio essenziale scelto — lavanda per calmare, camomilla per equilibrare, eucalipto per risvegliare. La spugna assorbe e trattiene il profumo nel tempo.
+        </p>
         <div class="step-arr">↗</div>
       </div>
-      <div class="step sr">
-        <div class="step-n">II</div>
+      <div class="step anim-el">
+        <div class="step-num">II</div>
         <h3 class="step-title">Scrivi</h3>
-        <p class="step-desc">Durante l'uso, il profumo viene rilasciato delicatamente accompagnando ogni gesto con un sottile aroma terapeutico, invisibile a chi ti sta vicino.</p>
+        <p class="step-desc">
+          Durante l'uso, il calore della mano e il movimento naturale della presa favoriscono il rilascio graduale del profumo. L'aroma si diffonde delicatamente, accompagnando ogni gesto della scrittura in modo sottile e non invasivo.
+        </p>
         <div class="step-arr">↗</div>
       </div>
-      <div class="step sr">
-        <div class="step-n">III</div>
+      <div class="step anim-el">
+        <div class="step-num">III</div>
         <h3 class="step-title">Respira & Ritrova</h3>
-        <p class="step-desc">Le molecole olfattive raggiungono il sistema limbico attivando la risposta di rilassamento. Ogni parola diventa un piccolo momento di cura.</p>
+        <p class="step-desc">
+          Le molecole olfattive raggiungono il sistema limbico — la parte del cervello legata alle emozioni — attivando una risposta di rilassamento del sistema nervoso. Ogni parola diventa un piccolo momento di cura personale.
+        </p>
         <div class="step-arr">↗</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- VIDEO -->
+<!-- ═══ VIDEO ═════════════════════════════════════════════ -->
 <div id="vid">
   <div class="vid-wrap">
     <video autoplay muted loop playsinline>
       <source src="video.mov" type="video/mp4">
     </video>
     <div class="vid-ov"></div>
-    <div class="vid-cap" id="vcap"><p>Un gesto. Un profumo. Un rituale.</p></div>
+    <div class="vid-cap">
+      <p>Un gesto. Un profumo. Un rituale.</p>
+    </div>
   </div>
 </div>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- STAT -->
+<!-- ═══ STAT ══════════════════════════════════════════════ -->
 <section id="stat">
   <div class="stat-ghost">70%</div>
-  <div class="wrap stat-c">
-    <span class="lbl sr">Il Problema</span>
-    <div class="stat-num sr" id="statnum">0%</div>
-    <p class="stat-q sr">delle persone nel mondo soffre di stress frequente, a causa dei ritmi frenetici e delle pressioni quotidiane.</p>
-    <p class="stat-b sr">Proprio da questa consapevolezza nasce la nostra idea: trasformare un gesto semplice come la scrittura in un momento di benessere. Un oggetto comune diventa strumento per ritrovare equilibrio e tranquillità.</p>
+  <div class="wrap stat-inner">
+    <span class="lbl anim-el">Il Problema</span>
+    <span class="stat-num anim-el" id="statcounter">70%</span>
+    <p class="stat-headline anim-el">
+      delle persone nel mondo soffre di stress frequente,<br>
+      a causa dei ritmi frenetici e delle pressioni quotidiane.
+    </p>
+    <p class="stat-body anim-el">
+      Proprio da questa consapevolezza nasce la nostra idea: trasformare un gesto semplice come la scrittura in un momento di benessere. La penna, realizzata in legno naturale, integra una spugna interna pensata per l'aromaterapia, permettendo di associare concentrazione e relax. In questo modo, un oggetto comune diventa uno strumento per ritrovare equilibrio e tranquillità.
+    </p>
   </div>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- ESSENZE -->
+<!-- ═══ ESSENZE ═══════════════════════════════════════════ -->
 <section id="essenze">
   <div class="wrap ess-hdr">
-    <span class="lbl sr">La Triade del Benessere Neurologico</span>
-    <h2 class="ttl sr">Come le essenze <em>resettano</em><br>la risposta allo stress</h2>
-    <p class="bod sr" style="margin-top:1.4rem">Lavanda, Camomilla ed Eucalipto: insieme offrono un supporto completo — calmare, equilibrare, risvegliare.</p>
+    <span class="lbl anim-el">La Triade del Benessere Neurologico</span>
+    <h2 class="ttl anim-el">Come le essenze <em>resettano</em><br>la risposta allo stress</h2>
+    <p class="bod anim-el" style="margin-top: 1.4rem;">
+      Il nostro sistema nervoso, quando è sotto stress, ha bisogno di tre azioni specifiche per tornare in equilibrio. Abbiamo selezionato Lavanda, Camomilla ed Eucalipto perché insieme offrono un supporto completo.
+    </p>
   </div>
-  <div class="ess-outer">
-    <div class="ess-inner" id="essrow">
+
+  <div class="ess-outer" id="essOuter">
+    <div class="ess-row" id="essRow">
+
       <div class="essa lavanda">
         <div class="essa-stripe lavanda"></div>
         <h3 class="essa-name">Lavanda</h3>
-        <span class="essa-tag">Calmare · Spegnere l'agitazione</span>
-        <p class="essa-desc">Agisce direttamente sul sistema nervoso centrale abbassando i livelli di cortisolo. Scioglie la tensione muscolare, placa i pensieri ossessivi e rallenta dolcemente il battito cardiaco, favorendo un rilassamento profondo e immediato.</p>
-        <div class="essa-glyph">I</div>
+        <span class="essa-tag">Calmare · Spegnere l'agitazione immediata</span>
+        <p class="essa-desc">
+          Agisce direttamente sul sistema nervoso centrale, contribuendo ad abbassare i livelli di cortisolo — l'ormone dello stress. Scioglie la tensione muscolare, placa i pensieri ossessivi e rallenta dolcemente il battito cardiaco, favorendo un rilassamento profondo e immediato.
+        </p>
+        <div class="essa-bg">I</div>
       </div>
+
       <div class="essa camomilla">
         <div class="essa-stripe camomilla"></div>
         <h3 class="essa-name">Camomilla</h3>
-        <span class="essa-tag">Equilibrare · Sciogliere le tensioni</span>
-        <p class="essa-desc">Il suo profumo dolce e floreale agisce come un leggero sedativo naturale. Ideale per ridurre l'iperattività mentale, placare l'irritabilità improvvisa e contrastare il senso di ansia accumulata a livello viscerale.</p>
-        <div class="essa-glyph">II</div>
+        <span class="essa-tag">Equilibrare · Sciogliere le tensioni profonde</span>
+        <p class="essa-desc">
+          Il suo profumo dolce e floreale agisce come un leggero sedativo naturale sul sistema nervoso. È l'essenza ideale per ridurre l'iperattività mentale, placare l'irritabilità improvvisa e contrastare il senso di ansia e la tensione accumulata a livello viscerale.
+        </p>
+        <div class="essa-bg">II</div>
       </div>
+
       <div class="essa eucalipto">
         <div class="essa-stripe eucalipto"></div>
         <h3 class="essa-name">Eucalipto</h3>
-        <span class="essa-tag">Risvegliare · Ritrovare la lucidità</span>
-        <p class="essa-desc">Stimola il sistema nervoso aiutando a resettare la mente nei momenti di sovraccarico. La sua azione balsamica riduce la stanchezza cognitiva e regala un immediato senso di lucidità e respiro libero.</p>
-        <div class="essa-glyph">III</div>
+        <span class="essa-tag">Risvegliare · Ritrovare la lucidità mentale</span>
+        <p class="essa-desc">
+          Stimola il sistema nervoso aiutando a "resettare" la mente nei momenti di sovraccarico cognitivo. La sua azione balsamica riduce la stanchezza causata dallo stress, dissipa la confusione mentale e regala un immediato senso di lucidità e respiro libero.
+        </p>
+        <div class="essa-bg">III</div>
       </div>
+
     </div>
   </div>
   <p class="ess-hint">← trascina per esplorare →</p>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- USI -->
+<!-- ═══ USI ═══════════════════════════════════════════════ -->
 <section id="usi">
   <div class="wrap">
-    <span class="lbl sr">Per chi è pensata</span>
-    <h2 class="ttl sr">Casi <em>d'uso</em></h2>
-    <div class="usi-g">
-      <div class="uso sr"><div class="uso-n">01</div><div><h3 class="uso-title">Studenti</h3><p class="uso-desc">Per affrontare con lucidità esami, sessioni intensive e momenti di ansia da prestazione. L'aroma accompagna la concentrazione durante le ore più impegnative.</p></div></div>
-      <div class="uso sr"><div class="uso-n">02</div><div><h3 class="uso-title">Professionisti</h3><p class="uso-desc">Per gestire lo stress durante riunioni importanti, presentazioni o scadenze pressanti. Un piccolo rituale discreto che aiuta a mantenere la calma sotto pressione.</p></div></div>
-      <div class="uso sr"><div class="uso-n">03</div><div><h3 class="uso-title">In Viaggio</h3><p class="uso-desc">Per trovare un momento di tranquillità in aereo, treno o autobus senza disturbare chi è vicino. Un respiro di natura in mezzo al caos degli spostamenti.</p></div></div>
-      <div class="uso sr"><div class="uso-n">04</div><div><h3 class="uso-title">Momenti di Tensione</h3><p class="uso-desc">Per ritrovare rapidamente la calma in qualsiasi situazione stressante della vita quotidiana. Olfea è sempre con te, pronta a trasformare un momento difficile.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<hr class="hr">
-
-<!-- PRODOTTO -->
-<section id="prodotto">
-  <div class="wrap prod-g">
-    <div class="prod-img-w sr">
-      <div class="prod-glow"></div>
-      <img id="pimg" src="penna_19.png" alt="Dettaglio Penna Olfea" onerror="this.src='penna_hq.png'">
-    </div>
-    <div>
-      <span class="lbl sr">Il Prodotto</span>
-      <h2 class="ttl sr">La <em>Penna</em></h2>
-      <p class="bod sr" style="margin:1.4rem 0 2rem">Ogni dettaglio è pensato per evocare naturalezza, solidità e cura. Il legno caldo al tatto, le finiture in bronzo, l'incisione botanica: Olfea non è solo funzionale — è un oggetto da portare con orgoglio.</p>
-      <div class="feats">
-        <div class="feat sr"><div class="fmark"></div><div><p class="fh">Corpo in legno naturale</p><p class="fp">Caldo al tatto, richiama semplicità e autenticità in ogni sessione di scrittura.</p></div></div>
-        <div class="feat sr"><div class="fmark"></div><div><p class="fh">Finiture in bronzo satinato</p><p class="fp">Tappo con incisione botanica, terminale a knurling e punto penna tornito per una qualità percettiva premium.</p></div></div>
-        <div class="feat sr"><div class="fmark"></div><div><p class="fh">Spugna aromaterapeutica interna</p><p class="fp">Il cuore dell'innovazione: ricaricabile dal tappo, trattiene e rilascia gradualmente le essenze botaniche scelte.</p></div></div>
-        <div class="feat sr"><div class="fmark"></div><div><p class="fh">Pennino intercambiabile</p><p class="fp">Meccanismo a rotazione. Scrittura fluida, sostenibile e ricaricabile nel tempo.</p></div></div>
+    <span class="lbl anim-el">Per chi è pensata</span>
+    <h2 class="ttl anim-el">Casi <em>d'uso</em></h2>
+    <div class="usi-grid">
+      <div class="uso anim-el">
+        <div class="uso-n">01</div>
+        <div>
+          <h3 class="uso-title">Studenti</h3>
+          <p class="uso-desc">Per affrontare con lucidità esami, sessioni di studio intensive e momenti di ansia da prestazione. L'aroma accompagna la concentrazione durante le ore più impegnative, trasformando il banco di studio in uno spazio di calma produttiva.</p>
+        </div>
+      </div>
+      <div class="uso anim-el">
+        <div class="uso-n">02</div>
+        <div>
+          <h3 class="uso-title">Professionisti</h3>
+          <p class="uso-desc">Per gestire lo stress durante riunioni importanti, presentazioni o scadenze lavorative pressanti. Un piccolo rituale discreto che aiuta a mantenere la calma sotto pressione, senza che nessuno intorno se ne accorga.</p>
+        </div>
+      </div>
+      <div class="uso anim-el">
+        <div class="uso-n">03</div>
+        <div>
+          <h3 class="uso-title">In Viaggio</h3>
+          <p class="uso-desc">Per trovare un momento di tranquillità in aereo, treno o autobus, senza disturbare chi è vicino. Un respiro di natura in mezzo al caos degli spostamenti — la tua isola di calma portatile.</p>
+        </div>
+      </div>
+      <div class="uso anim-el">
+        <div class="uso-n">04</div>
+        <div>
+          <h3 class="uso-title">Momenti di Tensione</h3>
+          <p class="uso-desc">Per ritrovare rapidamente la calma in qualsiasi situazione stressante della vita quotidiana. Olfea è sempre con te, discreta nella tasca o sul tavolo, pronta a trasformare un momento difficile in un istante di cura.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- FUTURO -->
-<section id="futuro">
-  <div class="fut-ghost">SVILUPPI</div>
-  <div class="wrap" style="position:relative;z-index:2">
-    <span class="lbl sr">Roadmap</span>
-    <h2 class="ttl sr">Sviluppi <em>Futuri</em></h2>
-    <p class="bod sr" style="margin:1.4rem auto 0;text-align:center;max-width:58ch;margin-left:auto;margin-right:auto">Il progetto può evolversi con essenze intercambiabili, design personalizzati e blend terapeutici specifici per ogni esigenza.</p>
-    <div class="fut-g">
-      <div class="fut-card sr"><div class="fut-glyph">◈</div><h4 class="fut-h">Essenze Intercambiabili</h4><p class="fut-p">Cartucce modulari per scegliere il profumo più adatto al proprio stato d'animo o alle esigenze del momento.</p></div>
-      <div class="fut-card sr"><div class="fut-glyph">◇</div><h4 class="fut-h">Design Personalizzato</h4><p class="fut-p">Incisioni custom, legni diversi e colorazioni della ferramenta per rendere ogni Olfea unico e identitario.</p></div>
-      <div class="fut-card sr"><div class="fut-glyph">◎</div><h4 class="fut-h">Blend Terapeutici</h4><p class="fut-p">Fragranze con effetti mirati — rilassanti, energizzanti o di concentrazione — formulate con farmacisti.</p></div>
+<!-- ═══ PRODOTTO ══════════════════════════════════════════ -->
+<section id="prodotto">
+  <div class="wrap prod-g">
+
+    <div class="prod-img-w anim-el">
+      <div class="prod-glow"></div>
+      <img id="prod-img"
+           src="penna_19.png"
+           alt="Dettaglio Penna Olfea"
+           onerror="this.src='penna_hq.png'">
+    </div>
+
+    <div>
+      <span class="lbl anim-el">Il Prodotto</span>
+      <h2 class="ttl anim-el">La <em>Penna</em></h2>
+      <p class="bod anim-el" style="margin: 1.4rem 0 2rem;">
+        Ogni dettaglio è pensato per evocare naturalezza, solidità e cura. Il legno caldo al tatto, le finiture in bronzo satinato, l'incisione botanica sul tappo superiore: Olfea non è solo funzionale — è un oggetto da portare con orgoglio, capace di dire qualcosa di chi lo usa.
+      </p>
+      <div class="feats">
+        <div class="feat anim-el">
+          <div class="fmark"></div>
+          <div>
+            <p class="fh">Corpo in legno naturale</p>
+            <p class="fp">Caldo e piacevole al tatto, richiama semplicità e autenticità in ogni sessione di scrittura. Il legno è lavorato per evidenziarne la venatura naturale.</p>
+          </div>
+        </div>
+        <div class="feat anim-el">
+          <div class="fmark"></div>
+          <div>
+            <p class="fh">Finiture in bronzo satinato</p>
+            <p class="fp">Il tappo superiore con incisione botanica, il terminale inferiore a knurling e il punto penna tornito garantiscono una qualità percettiva premium e un'estetica inconfondibile.</p>
+          </div>
+        </div>
+        <div class="feat anim-el">
+          <div class="fmark"></div>
+          <div>
+            <p class="fh">Spugna aromaterapeutica interna</p>
+            <p class="fp">Il cuore dell'innovazione: una spugna ricaricabile accessibile dal tappo superiore, capace di trattenere e rilasciare gradualmente le essenze botaniche scelte.</p>
+          </div>
+        </div>
+        <div class="feat anim-el">
+          <div class="fmark"></div>
+          <div>
+            <p class="fh">Pennino refill intercambiabile</p>
+            <p class="fp">Meccanismo a rotazione per l'estrazione della punta. Scrittura fluida e precisa, sostenibile e ricaricabile nel tempo — senza sprechi.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<hr class="hr">
+<hr class="hr-line">
 
-<!-- FINALE -->
-<section id="finale">
-  <div class="wrap" style="max-width:750px">
-    <div class="fin-dashes sr">
-      <div class="fd" style="width:24px"></div>
-      <div class="fd" style="width:8px"></div>
-      <div class="fd" style="width:40px"></div>
+<!-- ═══ FUTURO ════════════════════════════════════════════ -->
+<section id="futuro">
+  <div class="fut-ghost">SVILUPPI</div>
+  <div class="wrap" style="position:relative;z-index:2;">
+    <span class="lbl anim-el">Roadmap</span>
+    <h2 class="ttl anim-el">Sviluppi <em>Futuri</em></h2>
+    <p class="bod anim-el" style="margin: 1.4rem auto 0; text-align:center; max-width:58ch; margin-left:auto; margin-right:auto;">
+      Il progetto può evolversi con essenze intercambiabili, così da permettere all'utente di scegliere ogni volta il profumo più adatto al proprio stato d'animo o alle esigenze del momento.
+    </p>
+    <div class="fut-grid">
+      <div class="fut-card anim-el">
+        <div class="fut-ico">◈</div>
+        <h4 class="fut-h">Essenze Intercambiabili</h4>
+        <p class="fut-p">Cartucce di essenza modulari per scegliere ogni volta il profumo più adatto al proprio stato d'animo: rilassante, energizzante o tonificante.</p>
+      </div>
+      <div class="fut-card anim-el">
+        <div class="fut-ico">◇</div>
+        <h4 class="fut-h">Design Personalizzato</h4>
+        <p class="fut-p">Incisioni custom, legni diversi e colorazioni della ferramenta per rendere ogni Olfea un oggetto unico e identitario — un'espressione di chi la porta.</p>
+      </div>
+      <div class="fut-card anim-el">
+        <div class="fut-ico">◎</div>
+        <h4 class="fut-h">Blend Terapeutici</h4>
+        <p class="fut-p">Fragranze con effetti mirati — rilassanti, energizzanti o di concentrazione — formulate con farmacisti e aromaterapeuti per massima efficacia.</p>
+      </div>
     </div>
-    <blockquote class="fin-q sr">"Un gesto semplice come scrivere può diventare un modo per prendersi cura di sé, ritrovando equilibrio anche nelle giornate più frenetiche."</blockquote>
-    <p class="fin-sig sr">OLFEA — Scrittura & Benessere · Gruppo 8</p>
+  </div>
+</section>
+
+<hr class="hr-line">
+
+<!-- ═══ CONCLUSIONE ═══════════════════════════════════════ -->
+<section id="conclusione">
+  <div class="wrap" style="max-width:750px;">
+    <div class="fin-dashes anim-el">
+      <div class="fd" style="width:24px;"></div>
+      <div class="fd" style="width:8px;"></div>
+      <div class="fd" style="width:40px;"></div>
+    </div>
+    <blockquote class="fin-q anim-el">
+      "Un gesto semplice come scrivere può diventare un modo per prendersi cura di sé, ritrovando equilibrio anche nelle giornate più frenetiche. Attraverso la scrittura si ha la possibilità di rallentare, ascoltarsi e dare spazio ai propri pensieri — trasformando un'azione quotidiana in un momento di benessere e consapevolezza."
+    </blockquote>
+    <p class="fin-sig anim-el">OLFEA — Scrittura & Benessere · Gruppo 8</p>
   </div>
 </section>
 
@@ -459,164 +1008,279 @@ footer{background:var(--deep);border-top:1px solid rgba(132,169,140,.08);padding
   <div class="ft-i">L'aromaterapia a portata di penna</div>
 </footer>
 
-<!-- GSAP -->
+<!-- ═══════════ SCRIPTS ═══════════ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── CURSOR ── */
-const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
-(function loop(){
-  rx+=(mx-rx)*.1;ry+=(my-ry)*.1;
-  dot.style.left=mx+'px';dot.style.top=my+'px';
-  ring.style.left=rx+'px';ring.style.top=ry+'px';
-  requestAnimationFrame(loop);
-})();
-document.querySelectorAll('a,button,.step,.uso,.fut-card,.essa').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{
-    dot.style.width='14px';dot.style.height='14px';
-    ring.style.width='56px';ring.style.height='56px';
-    ring.style.borderColor='var(--sage)';
-  });
-  el.addEventListener('mouseleave',()=>{
-    dot.style.width='8px';dot.style.height='8px';
-    ring.style.width='36px';ring.style.height='36px';
-    ring.style.borderColor='rgba(132,169,140,.45)';
-  });
-});
+/* ── CURSOR ──────────────────────────────────── */
+const curDot  = document.getElementById('cur-dot');
+const curRing = document.getElementById('cur-ring');
+let mX = 0, mY = 0, rX = 0, rY = 0;
 
-/* ── PARTICLES ── */
-const cv=document.getElementById('particles'),cx2=cv.getContext('2d');
-let W,H,pts=[];
-function resize(){W=cv.width=cv.offsetWidth;H=cv.height=cv.offsetHeight}
-resize();window.addEventListener('resize',resize);
-function mkPt(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.4+.4,a:Math.random()*.4+.05}}
-for(let i=0;i<70;i++)pts.push(mkPt());
-(function animPts(){
-  cx2.clearRect(0,0,W,H);
-  pts.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;
-    if(p.x<0||p.x>W)p.vx*=-1;
-    if(p.y<0||p.y>H)p.vy*=-1;
-    cx2.beginPath();cx2.arc(p.x,p.y,p.r,0,Math.PI*2);
-    cx2.fillStyle=`rgba(132,169,140,${p.a})`;cx2.fill();
-  });
-  requestAnimationFrame(animPts);
+document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+
+(function trackCursor() {
+  rX += (mX - rX) * 0.1;
+  rY += (mY - rY) * 0.1;
+  curDot.style.left  = mX + 'px';  curDot.style.top  = mY + 'px';
+  curRing.style.left = rX + 'px';  curRing.style.top = rY + 'px';
+  requestAnimationFrame(trackCursor);
 })();
 
-/* ── PRELOADER ── */
-function startHero(){
-  gsap.set(['.h-main span','.h-eyebrow span','.h-sub span','.h-small span'],{opacity:0});
-  gsap.set('#hpen',{opacity:0,y:30});
-  const h=gsap.timeline({defaults:{ease:'power3.out'}});
-  h.to('.h-main span',{duration:1.1,y:0,stagger:.04})
-   .to('.h-eyebrow span',{duration:.7,y:0,opacity:1,stagger:.08},'-=.8')
-   .to('.h-sub span',{duration:.7,y:0,opacity:1},'-=.7')
-   .to('.h-small span',{duration:.5,y:0,opacity:1},'-=.5')
-   .to('#hpen',{duration:1.3,opacity:1,y:0,ease:'power2.out'},'-=1')
-   .to('#hscroll',{duration:.7,opacity:1},'-=.3');
+document.querySelectorAll('a, .step, .uso, .fut-card, .essa').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    curDot.style.width = curDot.style.height = '14px';
+    curRing.style.width = curRing.style.height = '56px';
+    curRing.style.borderColor = 'rgba(132,169,140,.7)';
+  });
+  el.addEventListener('mouseleave', () => {
+    curDot.style.width = curDot.style.height = '8px';
+    curRing.style.width = curRing.style.height = '36px';
+    curRing.style.borderColor = 'rgba(132,169,140,.4)';
+  });
+});
+
+/* ── PARTICLES ───────────────────────────────── */
+const pcv = document.getElementById('pcv');
+const pctx = pcv.getContext('2d');
+let PW, PH, pts = [];
+
+function resizePcv() {
+  PW = pcv.width  = pcv.offsetWidth;
+  PH = pcv.height = pcv.offsetHeight;
 }
+resizePcv();
+window.addEventListener('resize', resizePcv);
 
-const pre=gsap.timeline({
-  onComplete(){
-    gsap.to('#preloader',{duration:.7,opacity:0,y:-20,ease:'power2.in',
-      onComplete(){document.getElementById('preloader').style.display='none'}});
-    startHero();
-  }
-});
-document.querySelectorAll('.pre-logo span').forEach((s,i)=>{
-  pre.to(s,{duration:.45,y:0,opacity:1,ease:'back.out(2.5)'},i*.07);
-});
-pre.to('#pbar',{duration:1.1,width:'100%',ease:'power2.inOut'},.3);
-pre.to('#ptagline',{duration:.5,opacity:1},.7);
-pre.to({},.4);
-
-/* ── NAV ── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',scrollY>60);
-});
-
-/* ── HERO PARALLAX ── */
-const heroSec=document.getElementById('hero'),hpen=document.getElementById('hpen');
-heroSec.addEventListener('mousemove',e=>{
-  const cx=heroSec.clientWidth/2,cy=heroSec.clientHeight/2;
-  const dx=(e.clientX-cx)/cx,dy=(e.clientY-cy)/cy;
-  gsap.to(hpen,{duration:.55,ease:'power2.out',rotateY:dx*10,rotateX:-dy*6,x:dx*14,y:dy*6});
-});
-heroSec.addEventListener('mouseleave',()=>{
-  gsap.to(hpen,{duration:.9,rotateY:0,rotateX:0,x:0,y:0,ease:'elastic.out(1,.5)'});
-});
-gsap.to(hpen,{y:'+=18',duration:2.8,ease:'sine.inOut',yoyo:true,repeat:-1});
-
-/* ── GHOST TEXT PARALLAX ── */
-gsap.to('.hero-ghost',{
-  scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1.2},
-  y:-100,opacity:.2
-});
-
-/* ── SCROLL REVEALS ── */
-gsap.utils.toArray('.sr').forEach(el=>{
-  gsap.fromTo(el,{opacity:0,y:50},{
-    opacity:1,y:0,duration:.85,ease:'power3.out',
-    scrollTrigger:{trigger:el,start:'top 87%',toggleActions:'play none none none'}
-  });
-});
-
-/* ── STAT COUNTER ── */
-let counted=false;
-ScrollTrigger.create({
-  trigger:'#stat',start:'top 70%',
-  onEnter(){
-    if(counted)return;counted=true;
-    const el=document.getElementById('statnum');
-    let n={v:0};
-    gsap.to(n,{v:70,duration:2.4,ease:'power2.out',
-      onUpdate(){el.textContent=Math.round(n.v)+'%'}});
-  }
-});
-
-/* ── VIDEO CAPTION ── */
-ScrollTrigger.create({
-  trigger:'#vid',start:'top 60%',
-  onEnter(){document.getElementById('vcap').classList.add('on')}
-});
-
-/* ── ESSENZE DRAG SCROLL ── */
-const eo=document.querySelector('.ess-outer');
-const ei=document.getElementById('essrow');
-let drag=false,sx=0,sl=0;
-eo.style.overflowX='auto';eo.style.scrollbarWidth='none';
-ei.addEventListener('mousedown',e=>{drag=true;sx=e.pageX-eo.offsetLeft;sl=eo.scrollLeft;ei.style.cursor='grabbing'});
-window.addEventListener('mouseup',()=>{drag=false;ei.style.cursor='grab'});
-window.addEventListener('mousemove',e=>{if(!drag)return;const x=e.pageX-eo.offsetLeft;eo.scrollLeft=sl-(x-sx)*1.5});
-eo.addEventListener('wheel',e=>{e.preventDefault();eo.scrollLeft+=e.deltaY*1.5},{passive:false});
-let ts=0,tsl=0;
-ei.addEventListener('touchstart',e=>{ts=e.touches[0].pageX;tsl=eo.scrollLeft});
-ei.addEventListener('touchmove',e=>{eo.scrollLeft=tsl-(e.touches[0].pageX-ts)});
-// Auto-nudge hint
-let nudged=false;
-ScrollTrigger.create({trigger:'#essenze',start:'top 65%',onEnter(){
-  if(nudged)return;nudged=true;
-  gsap.to(eo,{scrollLeft:100,duration:.7,ease:'power2.inOut',
-    onComplete:()=>gsap.to(eo,{scrollLeft:0,duration:.5,ease:'power2.inOut'})});
-}});
-
-/* ── PRODOTTO TILT ── */
-const ps=document.getElementById('prodotto'),pi=document.getElementById('pimg');
-if(pi){
-  ps.addEventListener('mousemove',e=>{
-    const r=pi.getBoundingClientRect();
-    const dx=(e.clientX-(r.left+r.width/2))/(r.width/2);
-    const dy=(e.clientY-(r.top+r.height/2))/(r.height/2);
-    gsap.to(pi,{duration:.45,rotateY:dx*7,rotateX:-dy*5,ease:'power2.out'});
-  });
-  ps.addEventListener('mouseleave',()=>{
-    gsap.to(pi,{duration:.9,rotateY:0,rotateX:0,ease:'elastic.out(1,.5)'});
+for (let i = 0; i < 65; i++) {
+  pts.push({
+    x: Math.random() * PW, y: Math.random() * PH,
+    vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
+    r: Math.random() * 1.3 + .4,
+    a: Math.random() * .35 + .05
   });
 }
+(function drawPts() {
+  pctx.clearRect(0, 0, PW, PH);
+  pts.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > PW) p.vx *= -1;
+    if (p.y < 0 || p.y > PH) p.vy *= -1;
+    pctx.beginPath();
+    pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pctx.fillStyle = `rgba(132,169,140,${p.a})`;
+    pctx.fill();
+  });
+  requestAnimationFrame(drawPts);
+})();
+
+/* ── PRELOADER ───────────────────────────────── */
+// Hide hero content via GSAP (not CSS) so there's no flash
+gsap.set('#htitle, #hero-pen, #hey-l, #hey-r, #hsub-l, #hsub-r, #hmic-l, #hmic-r, #hscroll',
+  { opacity: 0 });
+
+function runHeroEntrance() {
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  tl.to('#htitle',  { opacity: 1, y: 0, duration: 1.0, from: { y: 40 } })
+    .to('#hero-pen', { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out',
+                       fromVars: { y: 30 } }, '-=.9')
+    .to(['#hey-l','#hey-r'],  { opacity: 1, y: 0, duration: .7, stagger: .1,
+                                fromVars: { y: 20 } }, '-=.8')
+    .to(['#hsub-l','#hsub-r'], { opacity: 1, y: 0, duration: .7, stagger: .1,
+                                 fromVars: { y: 20 } }, '-=.6')
+    .to(['#hmic-l','#hmic-r'], { opacity: 1, duration: .5, stagger: .1 }, '-=.4')
+    .to('#hscroll', { opacity: 1, duration: .5 }, '-=.2');
+
+  // From animations don't work that way - use fromTo instead
+  gsap.fromTo('#htitle',
+    { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' });
+  gsap.fromTo('#hero-pen',
+    { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.2, delay: .1, ease: 'power2.out' });
+  gsap.fromTo(['#hey-l','#hey-r'],
+    { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .7, delay: .3, stagger: .08, ease: 'power3.out' });
+  gsap.fromTo(['#hsub-l','#hsub-r'],
+    { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .7, delay: .45, stagger: .08, ease: 'power3.out' });
+  gsap.fromTo(['#hmic-l','#hmic-r'],
+    { opacity: 0 }, { opacity: 1, duration: .5, delay: .65, stagger: .08 });
+  gsap.fromTo('#hscroll',
+    { opacity: 0 }, { opacity: 1, duration: .5, delay: .9 });
+}
+
+const preTl = gsap.timeline({ onComplete: onPreloaderDone });
+
+document.querySelectorAll('.pre-word span').forEach((s, i) => {
+  preTl.fromTo(s,
+    { y: '120%', opacity: 0 },
+    { y: '0%', opacity: 1, duration: .4, ease: 'back.out(2.5)' },
+    i * .07
+  );
+});
+preTl.to('#pfill', { width: '100%', duration: 1.1, ease: 'power2.inOut' }, .3);
+preTl.to({}, { duration: .4 }); // brief pause
+
+function onPreloaderDone() {
+  gsap.to('#preloader', {
+    opacity: 0, y: -25, duration: .65, ease: 'power2.in',
+    onComplete() { document.getElementById('preloader').style.display = 'none'; }
+  });
+  runHeroEntrance();
+}
+
+/* ── NAV SCROLL ──────────────────────────────── */
+const mainnav = document.getElementById('mainnav');
+window.addEventListener('scroll', () => {
+  mainnav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ── HERO PEN PARALLAX ───────────────────────── */
+const heroSec = document.getElementById('hero');
+const heroPen = document.getElementById('hero-pen');
+
+heroSec.addEventListener('mousemove', e => {
+  const cx = heroSec.offsetWidth  / 2;
+  const cy = heroSec.offsetHeight / 2;
+  const dx = (e.clientX - cx) / cx;
+  const dy = (e.clientY - cy) / cy;
+  gsap.to(heroPen, {
+    duration: .55, ease: 'power2.out',
+    rotateY: dx * 10, rotateX: -dy * 6,
+    x: dx * 14, y: dy * 6
+  });
+});
+heroSec.addEventListener('mouseleave', () => {
+  gsap.to(heroPen, {
+    duration: 1, rotateY: 0, rotateX: 0, x: 0, y: 0,
+    ease: 'elastic.out(1, .5)'
+  });
+});
+
+// Floating pen loop
+gsap.to(heroPen, {
+  y: '+=18', duration: 2.8, ease: 'sine.inOut',
+  yoyo: true, repeat: -1
+});
+
+// Ghost text slow scroll parallax
+gsap.to('.h-ghost', {
+  scrollTrigger: {
+    trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.2
+  },
+  y: -90, opacity: .15
+});
+
+/* ── SCROLL REVEALS — THE CORRECT WAY ────────── */
+/*
+   KEY FIX: we do NOT hide .anim-el in CSS.
+   Instead GSAP sets opacity:0 immediately on DOMContentLoaded,
+   then ScrollTrigger reveals them. This prevents invisible divs
+   if ScrollTrigger fails, and handles elements already in viewport.
+*/
+window.addEventListener('DOMContentLoaded', () => {
+  gsap.set('.anim-el', { opacity: 0, y: 45 });
+
+  // Small delay so ScrollTrigger measures correctly after fonts/layout settle
+  setTimeout(() => {
+    gsap.utils.toArray('.anim-el').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1, y: 0,
+        duration: .85, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 90%',         // fires earlier = less chance of missing
+          toggleActions: 'play none none none',
+          once: true
+        }
+      });
+    });
+
+    // Force-reveal anything already in viewport on load
+    ScrollTrigger.refresh();
+  }, 100);
+});
+
+/* ── STAT COUNTER ────────────────────────────── */
+let counted = false;
+ScrollTrigger.create({
+  trigger: '#stat',
+  start: 'top 75%',
+  onEnter() {
+    if (counted) return;
+    counted = true;
+    const el = document.getElementById('statcounter');
+    let obj = { v: 0 };
+    gsap.to(obj, {
+      v: 70, duration: 2.2, ease: 'power2.out',
+      onUpdate() { el.textContent = Math.round(obj.v) + '%'; }
+    });
+  }
+});
+
+/* ── ESSENZE DRAG SCROLL ─────────────────────── */
+const essOuter = document.getElementById('essOuter');
+const essRow   = document.getElementById('essRow');
+let isDragging = false, startX = 0, scrollLeft = 0;
+
+essRow.addEventListener('mousedown', e => {
+  isDragging = true;
+  startX     = e.pageX - essOuter.offsetLeft;
+  scrollLeft = essOuter.scrollLeft;
+  essRow.style.cursor = 'grabbing';
+});
+window.addEventListener('mouseup',   () => { isDragging = false; essRow.style.cursor = 'grab'; });
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - essOuter.offsetLeft;
+  essOuter.scrollLeft = scrollLeft - (x - startX) * 1.4;
+});
+essOuter.addEventListener('wheel', e => {
+  e.preventDefault();
+  essOuter.scrollLeft += e.deltaY * 1.4;
+}, { passive: false });
+
+// Touch
+let tStartX = 0, tScrollL = 0;
+essRow.addEventListener('touchstart', e => {
+  tStartX  = e.touches[0].pageX;
+  tScrollL = essOuter.scrollLeft;
+});
+essRow.addEventListener('touchmove', e => {
+  essOuter.scrollLeft = tScrollL - (e.touches[0].pageX - tStartX);
+});
+
+// Auto-nudge hint on scroll-into-view
+let nudged = false;
+ScrollTrigger.create({
+  trigger: '#essenze', start: 'top 65%',
+  onEnter() {
+    if (nudged) return;
+    nudged = true;
+    gsap.to(essOuter, {
+      scrollLeft: 110, duration: .7, ease: 'power2.inOut',
+      onComplete: () => gsap.to(essOuter, { scrollLeft: 0, duration: .5, ease: 'power2.inOut' })
+    });
+  }
+});
+
+/* ── PROD IMG TILT ───────────────────────────── */
+const prodSec = document.getElementById('prodotto');
+const prodImg = document.getElementById('prod-img');
+if (prodImg) {
+  prodSec.addEventListener('mousemove', e => {
+    const r  = prodImg.getBoundingClientRect();
+    const dx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2);
+    const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+    gsap.to(prodImg, { duration: .45, rotateY: dx * 7, rotateX: -dy * 5, ease: 'power2.out' });
+  });
+  prodSec.addEventListener('mouseleave', () => {
+    gsap.to(prodImg, { duration: .9, rotateY: 0, rotateX: 0, ease: 'elastic.out(1,.5)' });
+  });
+}
+
+console.log('%cOLFEA', 'font-size:2rem;font-family:serif;color:#84a98c;letter-spacing:.5em');
+console.log('%cPenna Antistress Aromaterapeutica — Gruppo 8', 'color:#97ada2;font-size:.75rem');
 </script>
 </body>
 </html>
